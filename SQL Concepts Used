@@ -1,0 +1,19 @@
+SQL Concepts Used:
+
+INNER JOIN / LEFT JOIN
+
+GROUP BY & HAVING
+
+Subqueries
+
+Procedures
+
+CTE (Common Table Expressions)
+
+Window Functions (ROW_NUMBER, RANK)
+
+Aggregate Functions
+
+Date Functions
+
+Index Optimization
