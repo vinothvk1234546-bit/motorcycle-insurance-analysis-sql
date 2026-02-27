@@ -1,0 +1,6 @@
+SELECT region,
+       COUNT(claim_id) AS total_claims,
+       SUM(claim_amount) AS total_claim_amount
+FROM claims
+GROUP BY region
+ORDER BY total_claims DESC;
