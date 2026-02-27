@@ -1,0 +1,21 @@
+motorcycle-insurance-sql-analysis/
+│
+├── README.md
+│
+├── dataset/
+│   ├── insurance_data_sample.csv
+│
+├── schema/
+│   ├── create_tables.sql
+│
+├── queries/
+│   ├── 01_data_cleaning.sql
+│   ├── 02_exploratory_analysis.sql
+│   ├── 03_kpi_analysis.sql
+│   ├── 04_business_insights.sql
+│
+├── outputs/
+│   ├── result_screenshots.png
+│
+└── docs/
+    ├── project_overview.pdf
