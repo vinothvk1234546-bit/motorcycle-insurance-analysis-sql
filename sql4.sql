@@ -1,0 +1,172 @@
+use project;
+-- get the insurance policy table with all relavent details --
+-- join statemnts are used --
+SELECT 
+  m.Motorcycle_id, 
+  m.Model, 
+  m.make, 
+  ip.policy_id, 
+  ph.policyholder_id, 
+  ph.holder_name, 
+  ph.phone_number, 
+  ip.policy_start_date, 
+  ip.policy_end_date, 
+  p.payment_id, 
+  p.payment_amount, 
+  c.claim_id, 
+  c.Claim_date, 
+  c.Claim_amount, 
+  ia.agent_name, 
+  pa.agent_id, 
+  pa.assignment_id
+FROM 
+  insurance_policies ip 
+  JOIN motorcycle m ON ip.Motorcycle_id = m.motorcycle_id 
+  JOIN policyholders ph ON ip.policyholder_id = ph.policyholder_id 
+  LEFT JOIN claims c ON ip.policy_id = c.policy_id 
+  JOIN payments p ON ip.policy_id = p.policy_id 
+  JOIN policy_assignments pa ON ip.policy_id = pa.policy_id 
+  LEFT JOIN insurance_agents ia ON pa.agent_id = ia.agent_id 
+LIMIT 0, 100;
+
+
+SELECT 
+  m.Motorcycle_id, 
+  m.Model, 
+  m.make, 
+  ip.policy_id, 
+  ph.policyholder_id, 
+  ph.holder_name, 
+  ph.phone_number, 
+  ip.policy_start_date, 
+  ip.policy_end_date, 
+  p.payment_id, 
+  p.payment_amount, 
+  c.claim_id, 
+  c.Claim_date, 
+  c.Claim_amount, 
+  ia.agent_name, 
+  pa.agent_id, 
+  pa.assignment_id
+FROM 
+  insurance_policies ip 
+  JOIN motorcycle m ON ip.Motorcycle_id = m.motorcycle_id 
+  JOIN policyholders ph ON ip.policyholder_id = ph.policyholder_id 
+  LEFT JOIN claims c ON ph.claim_id = c.claim_id 
+  -- JOIN payments p ON payment_id = p.payment_id 
+  JOIN payments p ON ip.policy_id = p.policy_id 
+  JOIN policy_assignments pa ON ip.policy_id = pa.policy_id 
+  LEFT JOIN insurance_agents ia ON pa.agent_id = ia.agent_id 
+LIMIT 0, 100;
+
+  -- unoin statments are used --
+
+/*SELECT policy_id, policy_start_date, policy_end_date
+FROM insurance_policies
+UNION ALL                                        -- 
+SELECT claim_id, claim_date, claim_amount
+FROM claims
+UNION ALL
+SELECT payment_id, payment_date, payment_amount
+FROM payments;*/
+
+ -- If you want to combine these tables, you might want to consider adding a column to indicate the type of record, like this:  
+
+SELECT 'Policy' AS Motor_insurance , policy_id, policy_start_date, policy_end_date 
+FROM insurance_policies
+UNION ALL 
+SELECT 'Claim' AS Motor_insurance, claim_id, claim_date, claim_amount 
+FROM claims
+UNION ALL
+SELECT 'Payment' AS Motor_insurance , payment_id, payment_date, payment_amount 
+FROM payments;
+
+
+SELECT 'Policy' AS type, policy_id, policy_start_date, policy_end_date 
+FROM insurance_policies 
+UNION 
+SELECT 'Claim' AS type, claim_id, claim_date, claim_amount 
+FROM claims
+UNION 
+SELECT 'Payment' AS type, payment_id, payment_date, payment_amount 
+FROM payments;
+
+
+
+-- calculating  the totel premium customer --
+SELECT p.policyholder_id, SUM(p.premium) AS total_premium
+FROM insurance_policies p
+GROUP BY p.policyholder_id;
+
+
+-- the total claim amount for each policy type, along with the percentage of total claims for each type
+
+WITH total_claims AS (    -- act like subquery 
+  SELECT SUM(claim_amount) AS total_claim_amount 
+  FROM claims-- is a Common Table Expression (CTE) that calculates the total sum of all claim amounts in the claims table.
+)
+SELECT ip.premium, 
+       SUM(c.claim_amount) AS total_claim_amount, 
+       (SUM(c.claim_amount) / tc.total_claim_amount) * 100 AS percentage   -- to see the clim amnt formula CA/TCA *100
+FROM insurance_policies ip
+JOIN claims c ON ip.policy_id = c.policy_id
+CROSS JOIN total_claims tc
+GROUP BY ip.premium, tc.total_claim_amount;
+
+
+--  Identify agents who have sold policies with a total premium greater
+-- than $2000, along with the total premium and number of policies sold
+
+SELECT pa.agent_id, 
+       SUM(ip.premium) AS total_premium, 
+       COUNT(ip.policy_id) AS num_policies
+FROM policy_assignments pa
+JOIN insurance_policies ip ON pa.policy_id = ip.policy_id
+GROUP BY pa.agent_id
+HAVING SUM(ip.premium) > 2000;
+
+--  Identify agents who have sold policies with a total premium less
+-- than $2000, along with the total premium and number of policies sold
+
+SELECT pa.agent_id, 
+       SUM(ip.premium) AS total_premium, 
+       COUNT(ip.policy_id) AS num_policies
+FROM policy_assignments pa
+JOIN insurance_policies ip ON pa.policy_id = ip.policy_id
+GROUP BY pa.agent_id
+HAVING SUM(ip.premium) < 2000;
+
+
+-- the premium amnt Has incresed as 500 -- 
+select policyholder_id,premium from insurance_policies;
+SELECT p.policyholder_id, SUM(p.premium)+500 AS total_premium
+FROM insurance_policies p
+GROUP BY p.policyholder_id;
+
+-- after one month  premium amount has incresed as 1000 --
+SELECT p.policy_id, SUM(p.new_premium) + 1000 AS total_premium 
+FROM policy_renewals p 
+WHERE p.new_policy_start_date > DATE_SUB(CURDATE(), INTERVAL 1 MONTH)
+GROUP BY p.policy_id;
+
+
+
+ --   the average claim amount for each policy type
+SELECT ip.premium, AVG(c.claim_amount) AS avg_claim_amount
+FROM insurance_policies ip
+JOIN claims c ON ip.policy_id = c.policy_id
+GROUP BY ip.premium;
+
+
+  -- agent assigned for each policies --
+SELECT agent_id, COUNT(*) AS num_policies
+FROM policy_assignments
+GROUP BY agent_id;
+
+
+
+
+
+
+
+
