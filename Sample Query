@@ -1,4 +1,5 @@
--- To find a total claims 
+-- To find a total claims using group by 
+
 SELECT region,
        COUNT(claim_id) AS total_claims,
        SUM(claim_amount) AS total_claim_amount
