@@ -82,6 +82,7 @@ UNION ALL
 SELECT 'Payment' AS Motor_insurance , payment_id, payment_date, payment_amount 
 FROM payments;
 
+ -- If you want to combine these tables, you might want to consider adding a column to indicate the type of record, like this: 
 
 SELECT 'Policy' AS type, policy_id, policy_start_date, policy_end_date 
 FROM insurance_policies 
@@ -95,6 +96,7 @@ FROM payments;
 
 
 -- calculating  the totel premium customer --
+
 SELECT p.policyholder_id, SUM(p.premium) AS total_premium
 FROM insurance_policies p
 GROUP BY p.policyholder_id;
