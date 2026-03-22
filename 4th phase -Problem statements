@@ -1,4 +1,5 @@
 -- These are the basic Problem statments in motor cycle insurance policy 
+-- to access the project schema it named as project 
 use project;
 -- get the insurance policy table with all relavent details --
 
