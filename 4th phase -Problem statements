@@ -1,6 +1,7 @@
 -- These are the basic Problem statments in motor cycle insurance policy 
 use project;
 -- get the insurance policy table with all relavent details --
+
 -- join statemnts are used --
 SELECT 
   m.Motorcycle_id, 
